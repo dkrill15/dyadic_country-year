@@ -1,0 +1,28 @@
+,year,cname,nabeslist
+1,NA,AUS,"c(""FJI"", ""NZL"", ""PNG"", ""SLB"", ""VUT"")"
+2,NA,BHR,"c(""QAT"", ""SAU"")"
+3,NA,COM,"c(""MOZ"", ""SYC"")"
+4,NA,CPV,"c(""GMB"", ""SEN"")"
+5,NA,CUB,"c(""HTI"", ""JAM"", ""MEX"", ""USA"")"
+6,NA,CYP,"c(""LBN"", ""TUR"")"
+7,NA,FJI,"c(""AUS"", ""SLB"", ""VUT"")"
+8,NA,HKG,CHN
+9,NA,ISL,GBR
+10,NA,JAM,"c(""CUB"", ""HTI"")"
+11,NA,JPN,KOR
+12,NA,LKA,IND
+13,NA,MDG,"c(""MOZ"", ""MUS"", ""SYC"")"
+14,NA,MDV,IND
+15,NA,MUS,"c(""MDG"", ""SYC"")"
+16,NA,NZL,AUS
+17,NA,PHL,"c(""CHN"", ""IDN"", ""MYS"", ""TWN"")"
+18,NA,SGP,MYS
+19,NA,SLB,"c(""AUS"", ""FJI"", ""PNG"", ""VUT"")"
+20,NA,STP,"c(""GAB"", ""GNQ"")"
+21,NA,SYC,"c(""COM"", ""KEN"", ""MDG"", ""MUS"", ""SOM"", ""TZA"", ""ZZB"")"
+22,NA,TLS,"c(""AUS"", ""IDN"", ""PNG"")"
+23,NA,TTO,"c(""BRB"", ""VEN"")"
+24,NA,TWN,"c(""CHN"", ""PHL"")"
+25,NA,VUT,"c(""AUS"", ""FJI"", ""SLB"")"
+26,NA,ZZB,"c(""KEN"", ""SYC"", ""TZA"")"
+,NA,MLT,"c(""ITA"", ""TUN"")"
