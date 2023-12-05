@@ -15,7 +15,7 @@ This file makes calls to the CShapes package and calculates 1) distance between 
 
 ### 02-04
 
-These files transform the output of **01** to an adjacency list csv (for editing in spreadsheet software), then to a company country-year-by-country matrix (for uploading to a remote machine), then to a country-year-by-country-year matrix (unpacks the previous matrix once uploaded to remote machine).
+These files transform the output of **01** to an adjacency list csv (for editing in spreadsheet software), then to a country-year-by-country matrix (for uploading to a remote machine), then to a country-year-by-country-year matrix (unpacks the previous matrix once uploaded to remote machine).
 
 ## Data
 
