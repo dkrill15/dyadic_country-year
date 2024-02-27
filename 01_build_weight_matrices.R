@@ -1,15 +1,15 @@
 #packages
 library(cshapes)
 library(countrycode)
-library(geosphere)
-library(od)
-library(spdep)
-library(sf)
-library(rgeos)
+library(geosphere) # use for calculating distances - distm
+library(od) # sfc_point_to_matrix (origin - destination)
+library(spdep) # spatial dependency library - investigate poly2nb (create neighbor list from polygons)
+library(sf) # read from shp files - investigate using st_buffer and then st_overlaps
+library(rgeos) # r geometry enginge open source - gTouches
 library(tidyverse)
 
 #constants
-WORKING_DIR = "~/kellogg/kellogg_r"
+WORKING_DIR = "~/kellogg/kellogg_r/11.14"
 NEIGHBORS_FILE = "missing_nabes.csv"
 VDATA_FILE = "VData.rds"
 START_YEAR = 1901
@@ -20,6 +20,8 @@ get_island_dict <- function () {
   # Build a dictionary of island neighbors
   islands <- read.csv(NEIGHBORS_FILE, stringsAsFactors = FALSE)
   islands <- islands[, !(names(islands) %in% c("X", "year"))]
+  
+  print(islands)
   
   # Create an empty list for the island dictionary
   island_dict <- list()
@@ -144,12 +146,13 @@ main_workflow <- function () {
         country2_year_name = paste0(country2, year)
         
         #### POPULATE MATRICES ####
-        # Calculate border - averaged over 2 years
-        touch = country %in% island_dict[[country2]] | (gTouches(as(cshapes_data[cshapes_data$cowcode==country,], Class="Spatial"), 
+        #Calculate border - averaged over 2 years
+        touch = country %in% island_dict[[country2]] | (gTouches(as(cshapes_data[cshapes_data$cowcode==country,], Class="Spatial"),
                                                                  as(cshapes_data[cshapes_data$cowcode==country2,], Class="Spatial")))
-        touch2 = country %in% island_dict[[country2]] | gTouches(as(cshapes_data_next[cshapes_data_next$cowcode==country,], Class="Spatial"), 
+        touch2 = country %in% island_dict[[country2]] | gTouches(as(cshapes_data_next[cshapes_data_next$cowcode==country,], Class="Spatial"),
                                                                  as(cshapes_data_next[cshapes_data_next$cowcode==country2,], Class="Spatial"))
         border_mat[country2_year_name, country] = (touch + touch2) / 2
+        
         
         # Calculate distance - averaged over 2 years
         dist_mat[country2_year_name, country] =

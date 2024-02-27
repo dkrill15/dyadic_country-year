@@ -1,7 +1,7 @@
 library(haven)
 
 # Constants
-WORKING_DIR = "~/kellogg/kellogg_r"
+WORKING_DIR = "~/kellogg/kellogg_r/11.14"
 NEIGHBORS_FILE = "missing_nabes.csv"
 VDATA_FILE = "VData.rds"
 START_YEAR = 1901

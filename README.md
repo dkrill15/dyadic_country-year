@@ -2,8 +2,9 @@
 
 Use these R scripts to build 4 different representations of country-by-country contiguity and centroid distance. 
 
-# TODO:
-add links to extra shapefiles
+## Running the Scripts
+
+In all scripts, make sure to change working directory variables.
 
 ### 01: build_weight_matrices
 
@@ -18,6 +19,5 @@ These files transform the output of **01** to an adjacency list csv (for editing
 ### missing_nabes.csv 
 Contains island countries that informs the creation of island_dict in **01**.
 
-### not included in repo
-
-list files not uploaded here
+### Not included in repo
+Please obtain supplementary shapefiles for South Sudan, Timor Leste, Hong Kong, and Montenegro, as CShapes does not contain data for these countries.
