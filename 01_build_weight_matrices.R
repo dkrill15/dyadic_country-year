@@ -4,7 +4,7 @@ library(countrycode)
 library(geosphere) # use for calculating distances - distm
 library(od) # sfc_point_to_matrix (origin - destination)
 library(spdep) # spatial dependency library - investigate poly2nb (create neighbor list from polygons)
-library(sf) # read from shp files - investigate using st_buffer and then st_overlaps
+library(sf) # read from shp files - investigate using st_buffer and then st_overlaps - better than sp
 library(rgeos) # r geometry enginge open source - gTouches
 library(tidyverse)
 
@@ -48,7 +48,7 @@ main_workflow <- function () {
   
   # Dictionary for manual translation
   extra_code_dict <- c(
-    "265" = 'DDR', "260" = "DDR", "997" = 'HKG', "665" = 'PSB', "6631" = 'PSE',
+    "265" = 'GDR', "260" = "GFR", "997" = 'HKG', "665" = 'PSB', "6631" = 'PSE',
     "6511" = 'PSG', "521" = 'SML', "5200" = 'SML', "345" = 'SRB', 
     "817" = 'VDR', "347" = 'XKX', "678" = 'YMD', "511" = 'ZZB'
   )
@@ -69,7 +69,7 @@ main_workflow <- function () {
   countries <- sort(unique(VData$country_text_id))
   
   # Generate country-year names
-  years_list <- seq(from = START_YEAR * 10 + 5, to = END_YEAR * 10 + 5, by = 2)
+  years_list <- seq(from = START_YEAR, to = END_YEAR, by = 1)
   cy <- as.vector(t(sapply(countries, function(c) paste0(c, years_list))))
   
   # Create country-year x country-year matrix
@@ -83,7 +83,7 @@ main_workflow <- function () {
   border_mat <- country_year
   dist_mat <- country_year
   
-  years_list_loop = seq(from = START_YEAR, to = END_YEAR, by = 2)
+  years_list_loop = seq(from = START_YEAR, to = END_YEAR, by = 1)
   
   get_cshapes_data <- function(cur_year) {
     cshapes_data = cshp(date = as.Date(cur_year), useGW = FALSE, dependencies = TRUE)
@@ -104,33 +104,33 @@ main_workflow <- function () {
   for (year in years_list_loop) {
     print(paste0("Retrieving CShapes data for: ", year))
     cur_year = paste(year, "-01-01", sep="")
-    next_year = paste(year+1, "-01-01", sep="")
+    # next_year = paste(year+1, "-01-01", sep="")
     
     # Retrieve CShapes data
     cshapes_data <- get_cshapes_data(cur_year)
-    cshapes_data_next <- if (next_year < MAX_DATE) {
-      get_cshapes_data(next_year)
-    } else {
-      cshapes_data
-    }
+    # cshapes_data_next <- if (next_year < MAX_DATE) {
+    #   get_cshapes_data(next_year)
+    # } else {
+    #   cshapes_data
+    # }
     
     # Calculate centroids for distance calculation later
     sf_use_s2(FALSE)
     cshapes_data$centroids = st_centroid(cshapes_data$geometry)
-    cshapes_data_next$centroids = st_centroid(cshapes_data_next$geometry)
+    # cshapes_data_next$centroids = st_centroid(cshapes_data_next$geometry)
     sf_use_s2(TRUE)
     
     print(paste0("calculating distances and borders for: ", year))
     
     # Ensure that only countries included in this year are included
     lcountries = sort(cshapes_data$cowcode)
-    lcountries = intersect(lcountries, cshapes_data_next$cowcode)
+    # lcountries = intersect(lcountries, cshapes_data_next$cowcode)
     
     # Keep duplicate list to halve loop time
     countries_left = lcountries
     
     # year is the average of these two years (current year + .5) - represented as YYYY5
-    year = year * 10 + 5
+    # year = year * 10 + 5
     
     pb <- txtProgressBar(min = 0,     
                          max = length(lcountries) * length(countries) / 2, 
@@ -147,17 +147,31 @@ main_workflow <- function () {
         
         #### POPULATE MATRICES ####
         #Calculate border - averaged over 2 years
+        
+        touch = 0
+        
         touch = country %in% island_dict[[country2]] | (gTouches(as(cshapes_data[cshapes_data$cowcode==country,], Class="Spatial"),
                                                                  as(cshapes_data[cshapes_data$cowcode==country2,], Class="Spatial")))
-        touch2 = country %in% island_dict[[country2]] | gTouches(as(cshapes_data_next[cshapes_data_next$cowcode==country,], Class="Spatial"),
-                                                                 as(cshapes_data_next[cshapes_data_next$cowcode==country2,], Class="Spatial"))
-        border_mat[country2_year_name, country] = (touch + touch2) / 2
+        # touch2 = country %in% island_dict[[country2]] | gTouches(as(cshapes_data_next[cshapes_data_next$cowcode==country,], Class="Spatial"),
+        #                                                          as(cshapes_data_next[cshapes_data_next$cowcode==country2,], Class="Spatial"))
+        border_mat[country2_year_name, country] = touch
         
         
         # Calculate distance - averaged over 2 years
-        dist_mat[country2_year_name, country] =
-          (distm(sfc_point_to_matrix(cshapes_data$centroids[cshapes_data$cowcode==country]), sfc_point_to_matrix(cshapes_data$centroids[cshapes_data$cowcode==country2]), fun = distHaversine) +
-             distm(sfc_point_to_matrix(cshapes_data_next$centroids[cshapes_data_next$cowcode==country]), sfc_point_to_matrix(cshapes_data_next$centroids[cshapes_data_next$cowcode==country2]), fun = distHaversine) / 2)
+        distance = 
+          (
+            distm(
+              sfc_point_to_matrix(
+                cshapes_data$centroids[cshapes_data$cowcode==country]
+                ),
+              sfc_point_to_matrix(
+                cshapes_data$centroids[cshapes_data$cowcode==country2]
+                ),
+              fun = distHaversine)
+          )
+        
+        dist_mat[country2_year_name, country] = distance
+            
       }
       # Update countries_left (so less calls are made)
       countries_left <- countries_left[! countries_left %in% country]
@@ -184,8 +198,9 @@ main_workflow <- function () {
 
   # Export to stata-readable file
   require(foreign)
-  write.dta(as.data.frame(dist_mat), paste("dist_mat_condensed",".dta", sep=""))
-  write.dta(as.data.frame(border_mat), paste("border_mat_condensed",".dta", sep=""))
+  write.dta(as.data.frame(dist_mat), paste("dist_mat_condensed",".dta", sep=""), version=12)
+  write.dta(as.data.frame(border_mat), paste("border_mat_condensed",".dta", sep=""), version=12)
+
 }
 
 main_workflow()
