@@ -2,6 +2,11 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
+# network view with node loations determined by centoid 
+# look at html file for output
+# make sure there is zoom functionality
+
 def plot_country_highlighted(iso3_code):
     # Ensure the country code is in uppercase
     iso3_code = iso3_code.upper()
