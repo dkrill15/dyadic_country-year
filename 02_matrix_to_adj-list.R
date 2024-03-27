@@ -7,13 +7,15 @@ VDATA_FILE = "VData.rds"
 START_YEAR = 1901
 END_YEAR = 2019
 
+setwd(WORKING_DIR)
+
 # Read VDEM countries and border matrix
 VData <- readRDS(file = VDATA_FILE)
 countries <- sort(unique(VData$country_text_id))
 border_matrix <- read_dta("border_mat_condensed.dta")
 
 # Build country-year combinations
-years_list <- seq(from = START_YEAR + 0.5, to = END_YEAR + 0.5, by = 2)
+years_list <- seq(from = START_YEAR, to = END_YEAR, by = 1)
 country_year_combinations <- expand.grid(countries, years_list)
 country_year_combinations <- paste0(country_year_combinations$Var1, country_year_combinations$Var2)
 
@@ -23,9 +25,9 @@ adj_list <- list()
 # Convert matrix to adjacency list and write to CSV
 file_conn <- file("adjacency_list.csv", "w")
 writeLines(paste("Node,Connections"), con = file_conn)
-for (i in 1:nrow(border_matrix)) {
+for (i in 1:(nrow(border_matrix) - length(countries))) {
   connected_nodes <- colnames(border_matrix)[which(border_matrix[i,] == 1)]
-  row_name <- paste0(substr(country_year_combinations[i], 1, 7), "5")
+  row_name <- substr(country_year_combinations[i], 1, 7)
   
   adj_list[[row_name]] <- connected_nodes  # Store adjacency list
   
@@ -34,3 +36,4 @@ for (i in 1:nrow(border_matrix)) {
 }
 
 close(file_conn)
+

@@ -8,7 +8,7 @@ END_YEAR <- 2019
 setwd(WORKING_DIR)
 
 # Read in the matrix and adjust row names
-border_matrix_n <- read.csv(file = "ntbynmat.csv")
+border_matrix_n <- read.csv(file = "nt2bynmat.csv")
 rownames(border_matrix_n) <- border_matrix_n[, 1]
 border_matrix_n <- border_matrix_n[-nrow(border_matrix_n), -1]
 
@@ -17,7 +17,7 @@ VData <- readRDS(file = "VData.rds")
 countries <- sort(unique(VData$country_text_id))
 
 # Get country-year names
-years_list <- seq(from = START_YEAR, to = END_YEAR, by = 1)
+years_list <- seq(from = START_YEAR + .5, to = END_YEAR + .5, by = 2)
 cy <- expand.grid(countries, years_list)
 cy <- apply(cy, 1, paste, collapse = "")
 n <- length(countries)
@@ -26,7 +26,7 @@ country_year <- array(0, c(n * t, n * t), dimnames = list(cy, cy))
 country_year <- as.data.frame(country_year)
 border_matrix_nt <- country_year
 
-# Perform row weighting in ntxn matrix
+# Perform row weighting in nt2xn matrix
 for (i in 1:nrow(border_matrix_n)) {
   total_sum <- sum(border_matrix_n[i, ])
   if (total_sum > 1) {
@@ -41,9 +41,9 @@ for (i in 0:(t - 1)) {
   border_matrix_nt[b:e, b:e] <- border_matrix_n[b:e, ]
 }
 
-cat(nrow(border_matrix_n), '\n', file = "ntxnt.txt")
+cat(nrow(border_matrix_n), '\n', file = "nt2xnt2.txt")
 
-write.table(border_matrix_nt, file = "ntxnt.txt",
+write.table(border_matrix_nt, file = "nt2xnt2.txt",
             append = TRUE, sep = " ", row.names = FALSE, col.names = FALSE, quote = FALSE)
 
 
