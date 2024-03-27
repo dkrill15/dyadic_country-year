@@ -42,7 +42,6 @@ fixed_nodes = {
 df_changes, full_df = get_border_changes()
 
 
-
 # edges = []
 # nodes = []
 # visited = []
@@ -93,21 +92,15 @@ def text_to_dash_paragraph_with_line_breaks(text):
     # Split the text by line breaks
     lines = text.split('\n')
 
-    # Create a list to hold the Dash components, starting with the first line of text
     components = [lines[0]] if lines else []
 
-    # For each subsequent line, add a line break followed by the line of text
     for line in lines[1:]:
-        components.append(html.Br())  # Insert a line break
-        components.append(line)       # Insert the line of text
+        components.append(html.Br()) 
+        components.append(line)      
 
-    # Create and return the paragraph object containing the text with line breaks
     paragraph = html.P(components)
     return paragraph
 
-
-# 'paragraph_with_line_breaks' is now a Dash html.P object containing the multiline text with line breaks,
-# ready to be included in your Dash app layout.
 
 
 @app.callback(
@@ -135,7 +128,7 @@ def update_data(year):
                             'from': source, 
                             'to': t, 
                             # 'width': 10000000/dist_df.loc[y*183+i, t],
-                            'length': dist_df.loc[y*183+i, t]/5000,
+                            'length': dist_df.loc[y*183+i, t]/12000,
                             'smooth' : False
                             })
 
