@@ -17,7 +17,7 @@ VData <- readRDS(file = "VData.rds")
 countries <- sort(unique(VData$country_text_id))
 
 # Get country-year names
-years_list <- seq(from = START_YEAR * 10 + 5, to = END_YEAR * 10 + 5, by = 20)
+years_list <- seq(from = START_YEAR, to = END_YEAR, by = 1)
 cy <- expand.grid(countries, years_list)
 cy <- apply(cy, 1, paste, collapse = "")
 n <- length(countries)
