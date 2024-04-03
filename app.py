@@ -3,7 +3,7 @@ import visdcc
 import pandas as pd
 from dash import dcc
 from dash import html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from border_changes import get_border_changes, country_to_continent
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -17,6 +17,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # read adjacency_list.csv line by line
 with open('adjacency_list.csv', 'r') as f:
+    headers = f.readline()
     adj_list = f.readlines()
 
 dist_df = pd.read_stata('dist_mat_condensed.dta')
@@ -27,13 +28,13 @@ fixed_nodes = {
     'USA': {'x': -1700, 'y': 0},
     'FRA': {'x': 0, 'y': -50},
     # 'CHN': {'x': 1500, 'y': 180},
-    'RUS': {'x': 1000, 'y': -90},
+    # 'RUS': {'x': 1000, 'y': -90},
     'BRA': {'x': -700, 'y': 1500},
     'ZAF': {'x': 300, 'y': 2000},
     'AUS': {'x': 1650, 'y': 2000},
     'MLI': {'x': -200, 'y': 900},
     'GRC': {'x': 280, 'y': 375},
-    'SAU': {'x': 450, 'y': 600},
+    'SAU': {'x': 675, 'y': 775},
     'SOM': {'x': 620, 'y': 950},
     'EGY': {'x': 400, 'y': 650},
     'TWN': {'x': 1650, 'y': 600},
@@ -79,9 +80,13 @@ app.layout = html.Div([
         id='year-slider',
         min=1901,
         max=2019,
-        value=1980,
-        marks={str(year): str(year) for year in range(1901, 2020) if year % 5 == 0 or year == 1901 or year == 2019}
+        value=1902,
+        marks={str(year): str(year) for year in range(1901, 2020) if year % 5 == 0 or year == 1901 or year == 2019},
+        
     ), 
+    dcc.Checklist(['Distance Labels On'], [
+                  'Distance Labels On'], id='check-dist-labels'),
+
     html.H2(id='slider-output-container'),
     html.P(id='differences'),
 ])
@@ -89,27 +94,22 @@ app.title = 'Country Network'
 
 
 def text_to_dash_paragraph_with_line_breaks(text):
-    # Split the text by line breaks
     lines = text.split('\n')
-
     components = [lines[0]] if lines else []
-
     for line in lines[1:]:
         components.append(html.Br()) 
         components.append(line)      
-
     paragraph = html.P(components)
     return paragraph
-
-
 
 @app.callback(
     Output('network', 'data'),
     Output('slider-output-container', 'children'),
     Output('differences', 'children'),
-    [Input('year-slider', 'value')]
+    [Input('year-slider', 'value'),
+     Input('check-dist-labels', 'value')]
 )
-def update_data(year):
+def update_data(year, dist_labels):
     edges = []
     nodes = []
     visited = []
@@ -128,9 +128,12 @@ def update_data(year):
                             'from': source, 
                             'to': t, 
                             #'width': 10000000/dist_df.loc[y*183+i, t],
-                            'length': dist_df.loc[y*183+i, t]/20000,
+                            'length': dist_df.loc[y*183+i, t]/5000,
                             'smooth' : False
+                            
                             })
+                    if dist_labels:
+                        edges[-1]['label'] = str(int(dist_df.loc[y*183+i, t])) + ' km'
 
             if source in fixed_nodes:
                 xg = fixed_nodes[source]['x']
@@ -140,9 +143,6 @@ def update_data(year):
                 nodes.append({'id': source, 'label': source, 'shape': "dot",
                              'size': 7, 'fixed': False, 'color': country_to_continent(source)})
             visited.append(source)
-
-            if source == "FRA":
-                print(source, targets, dist_df.loc[y*183+i, targets[1]])
     change_desc = ""
     if year > 1901:
         old_neighbors = full_df[full_df['year'] == str(year - 1)]
