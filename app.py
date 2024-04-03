@@ -127,8 +127,8 @@ def update_data(year):
                         {
                             'from': source, 
                             'to': t, 
-                            # 'width': 10000000/dist_df.loc[y*183+i, t],
-                            'length': dist_df.loc[y*183+i, t]/12000,
+                            #'width': 10000000/dist_df.loc[y*183+i, t],
+                            'length': dist_df.loc[y*183+i, t]/20000,
                             'smooth' : False
                             })
 
@@ -141,7 +141,8 @@ def update_data(year):
                              'size': 7, 'fixed': False, 'color': country_to_continent(source)})
             visited.append(source)
 
-
+            if source == "FRA":
+                print(source, targets, dist_df.loc[y*183+i, targets[1]])
     change_desc = ""
     if year > 1901:
         old_neighbors = full_df[full_df['year'] == str(year - 1)]
