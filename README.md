@@ -14,6 +14,11 @@ This file makes calls to the CShapes package and calculates 1) distance between 
 
 These files transform the output of **01** to an adjacency list csv (for editing in spreadsheet software), then to a country-year-by-country matrix (for uploading to a remote machine), then to a country-year-by-country-year matrix (unpacks the previous matrix once uploaded to remote machine).
 
+## App
+
+The `app` folder contains a Dash app that displays the output of script 02. Install the necessary requirements from `requirements.txt` and run the app locally to view a force-directed network of countries for all the years studied. 
+Coming: a production deployment
+
 ## Data
 
 ### missing_nabes.csv 
