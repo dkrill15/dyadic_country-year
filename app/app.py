@@ -4,10 +4,11 @@ import pandas as pd
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output
-from app.border_changes import get_border_changes, country_to_continent, compile_changelog
+from border_changes import get_border_changes, country_to_continent, compile_changelog
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 
 with open('adjacency_list.csv', 'r') as f:
     headers = f.readline()
@@ -119,7 +120,6 @@ def update_data(year, dist_labels):
     
     return {'nodes': nodes, 'edges': edges}, f'Year: {year}', text_to_dash_paragraph_with_line_breaks(change_desc)
 
-
 @app.callback(
     Output("download-text", "data"),
     Input("download-button", "n_clicks"),
@@ -129,4 +129,4 @@ def download_neighbors():
     return dict(content=compile_changelog(), filename="border_changes.txt")
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8051)
+    app.run_server(host='0.0.0.0', port=8050, debug=True)
