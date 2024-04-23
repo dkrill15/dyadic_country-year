@@ -125,7 +125,7 @@ def update_data(year, dist_labels):
     Input("download-button", "n_clicks"),
     prevent_initial_call=True,
 )
-def download_neighbors():
+def download_neighbors(n_clicks):
     return dict(content=compile_changelog(), filename="border_changes.txt")
 
 if __name__ == '__main__':
