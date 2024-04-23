@@ -16,8 +16,9 @@ These files transform the output of **01** to an adjacency list csv (for editing
 
 ## App
 
-The `app` folder contains a Dash app that displays the output of script 02. Install the necessary requirements from `requirements.txt` and run the app locally to view a force-directed network of countries for all the years studied. 
-Coming: a production deployment
+The `app` folder contains a Dash app that displays the output of script 02. Install the necessary requirements from `requirements.txt` and run the app locally to view a force-directed network of countries for all the years studied. The app is deployed [here](https://dyadic-country-year.onrender.com)
+![Screenshot 2024-04-23 at 12 45 04 AM](https://github.com/dkrill15/dyadic_country-year/assets/71748033/356d5477-dd74-4c7a-b22d-3645cd8d3793)
+
 
 ## Data
 
